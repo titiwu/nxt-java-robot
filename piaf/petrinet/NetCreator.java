@@ -44,7 +44,7 @@ public abstract class NetCreator {
 		Place[] Places[];
 		Transition[] Transitions;
 		Starting_Place = this.getStartingPlace();
-		return false;
+		return true;
 		//TODO
 	}
 	

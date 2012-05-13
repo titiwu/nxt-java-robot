@@ -2,14 +2,9 @@ package robot;
 
 import piaf.petrinet.NetStateMonitor;
 import piaf.petrinet.PetriNetEngine;
-import piaf.petrinet.Place;
-import piaf.petrinet.Transition;
-import piaf.tools.FixedSizeQueue;
 import robot.Sound.SoundPlayer;
 import robot.TestNet.TestNetCreator2;
 import lejos.nxt.Button;
-import lejos.nxt.LCD;
-import lejos.nxt.Sound;
 
 
 /**
@@ -26,10 +21,36 @@ public class C3LegO {
 	 */
 	public static void main(String[] args) {
 		
-		TestNetCreator2 TestNet = new TestNetCreator2();
 		
-		PetriNetEngine Engine = new PetriNetEngine(Thread.NORM_PRIORITY, 1000, TestNet);
 		
+		
+		SoundPlayer SoundThread = new SoundPlayer(Thread.NORM_PRIORITY);
+		
+		TestNetCreator2 TestNet = new TestNetCreator2(SoundThread);
+		
+		PetriNetEngine Engine   = new PetriNetEngine(Thread.NORM_PRIORITY, 300, TestNet);
+		
+		
+		SoundThread.start();
+	    Engine.start();
+	    
+	    Button.waitForAnyPress();
+	    Engine.setCommand(NetStateMonitor.COMMAND_RUN);
+	    SoundThread.putCommand(SoundPlayer.Ascending);
+	    Button.waitForAnyPress();
+	    Engine.setCommand(NetStateMonitor.COMMAND_STOP_CYC_END);
+	    SoundThread.putCommand(SoundPlayer.Descending);
+	    Button.waitForAnyPress();
+	    
+	    
+	    Engine.stop();
+		SoundThread.stop();
+		
+		
+		
+		
+		
+		/*
 		SoundPlayer SoundThread = new SoundPlayer(Thread.NORM_PRIORITY);
 		Sound.pause(Sound.getTime()); //Wait until the last sound has finished
 		Sound.playNote(Sound.FLUTE, 600, 500);
@@ -54,7 +75,7 @@ public class C3LegO {
 		LCD.drawChar('6', 6, 1);
 	    Button.waitForAnyPress();
 	    SoundThread.stop();
-	    
+	    */
 		/*
 		Place TestPlace;
 		Transition[] TestTransition;

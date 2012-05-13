@@ -1,9 +1,5 @@
 package piaf.tools;
 
-import lejos.nxt.LCD;
-
-
-
 /**
  * A queue that stores commands (or more general Objects)
  * that a consumer thread can retrieve.
@@ -33,7 +29,6 @@ public class CommandQueue<E> {
 				//System.out.println("InterruptedException caught");
 			}
 		command = cq.pop();
-		LCD.drawInt(cq.size(), 1, 3);
 		notify();
 		return command;
 	}

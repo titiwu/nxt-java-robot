@@ -7,7 +7,7 @@ import lejos.nxt.Sound;
 
 /**
  * This is a implementation of a PetriNet engine.
- * The information about the net it kept in the place and transition classes
+ * The information about the net is kept in the place and transition classes
  * 
  * @author mb
  *
@@ -70,7 +70,6 @@ public class PetriNetEngine extends CyclicThread {
 	 */
 	protected void cyclicTask() {
 		byte NetState = getNetState();
-		Sound.beep();
 		LCD.drawInt((int) NetState, 4, 1);
 		LCD.drawInt((int) Active_Places.size(), 6, 1);
 		if (NetState == NetStateMonitor.STATE_STOPPED) {           /////////////// Stopped
