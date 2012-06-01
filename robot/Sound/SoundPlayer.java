@@ -26,13 +26,24 @@ public class SoundPlayer extends SporadicThread {
 		                                               500, 200,
 		                                               400, 200};
 	
+	// Instance for singleton (lowest priority for sound)!
+	private static SoundPlayer instance = new SoundPlayer(Thread.MIN_PRIORITY);
+	
 	/**
 	 * @param priority
 	 */
-	public SoundPlayer(int priority) {
+	private SoundPlayer(int priority) {
 		super(priority, (byte) 7);
 	}
 
+    /**
+     * Static method returns the instace of the class
+     */
+    public static SoundPlayer getInstance() {
+        return instance;
+    }
+
+	
 
 	protected void DoTask(byte NrOfSound) {
 		if (NrOfSound == Beep) {

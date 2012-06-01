@@ -2,9 +2,10 @@ package robot;
 
 import piaf.petrinet.NetStateMonitor;
 import piaf.petrinet.PetriNetEngine;
+import robot.MoveAround.MoveAndTurnNet;
 import robot.Sound.SoundPlayer;
-import robot.TestNet.TestNetCreator2;
 import lejos.nxt.Button;
+import lejos.nxt.NXT;
 
 
 /**
@@ -21,15 +22,11 @@ public class C3LegO {
 	 */
 	public static void main(String[] args) {
 		
+		SoundPlayer SoundThread = SoundPlayer.getInstance();
 		
+		MoveAndTurnNet MoveAndTurn = new MoveAndTurnNet();
 		
-		
-		SoundPlayer SoundThread = new SoundPlayer(Thread.NORM_PRIORITY);
-		
-		TestNetCreator2 TestNet = new TestNetCreator2(SoundThread);
-		
-		PetriNetEngine Engine   = new PetriNetEngine(Thread.NORM_PRIORITY, 300, TestNet);
-		
+		PetriNetEngine Engine   = new PetriNetEngine(Thread.NORM_PRIORITY, 100, MoveAndTurn);
 		
 		SoundThread.start();
 	    Engine.start();
@@ -42,12 +39,17 @@ public class C3LegO {
 	    SoundThread.putCommand(SoundPlayer.Descending);
 	    Button.waitForAnyPress();
 	    
-	    
 	    Engine.stop();
 		SoundThread.stop();
+		MoveAndTurn.stop();
 		
+		try {
+		    Thread.sleep(2000);
+		} catch (Exception e) {
+			System.out.println ("Err - " + e );
+		}
 		
-		
+		NXT.shutDown();
 		
 		
 		/*

@@ -2,8 +2,6 @@ package piaf.petrinet;
 
 import piaf.threads.CyclicThread;
 import piaf.tools.FixedSizeQueue;
-import lejos.nxt.LCD;
-import lejos.nxt.Sound;
 
 /**
  * This is a implementation of a PetriNet engine.
@@ -70,8 +68,8 @@ public class PetriNetEngine extends CyclicThread {
 	 */
 	protected void cyclicTask() {
 		byte NetState = getNetState();
-		LCD.drawInt((int) NetState, 4, 1);
-		LCD.drawInt((int) Active_Places.size(), 6, 1);
+		//LCD.drawInt((int) NetState, 4, 1);
+		//LCD.drawInt((int) Active_Places.size(), 6, 1);
 		if (NetState == NetStateMonitor.STATE_STOPPED) {           /////////////// Stopped
 			// Do nothing
 		} else if (NetState == NetStateMonitor.STATE_STARTING) {   /////////////// Starting
@@ -92,13 +90,13 @@ public class PetriNetEngine extends CyclicThread {
 				this.runNet();
 			// Starting place became deactivated
 			} else if(!Starting_Place_was_deactivated && !Starting_Place.isActive()) {
-				LCD.drawChar('L', 6, 7);
+				//LCD.drawChar('L', 6, 7);
 				this.runNet();
 				Starting_Place_was_deactivated = true;
 			// Starting place again active -> Cycle end reached!
 			} else if(Starting_Place_was_deactivated && Starting_Place.isActive()) { 
 				// Stop all possible ongoing movements
-				LCD.drawChar('Q', 7, 7);
+				//LCD.drawChar('Q', 7, 7);
 				StateMon.setNetState(NetStateMonitor.STATE_QUIT);
 			}
 		} else if (NetState == NetStateMonitor.STATE_QUIT) {        //////////////// Force quit/emergency stop
@@ -106,7 +104,7 @@ public class PetriNetEngine extends CyclicThread {
 			StateMon.setNetState(NetStateMonitor.STATE_STOPPED);
 		} else {
 			// We have a problem...
-			LCD.drawChar('E', 8, 7);
+			//LCD.drawChar('E', 8, 7);
 		}
 	}
 	
@@ -119,14 +117,14 @@ public class PetriNetEngine extends CyclicThread {
 		if (Active_Places.empty()) {
 			StateMon.setNetState(NetStateMonitor.STATE_ERROR);
 		}
-		LCD.drawChar('R', 3, 7);
+		//LCD.drawChar('R', 3, 7);
 		Active_Places.push(null); // insert null to recognize end of old places
 		place = (Place) Active_Places.pop();
 		// Iterate once over the queue (until the last, the null element is reached)
 		while (place != null) {
 			// If place hasn't been deactivated
 			if (place.isActive()) {
-				LCD.drawChar('P', 4, 7);
+				//LCD.drawChar('P', 4, 7);
 				// Execute Place action
 				place.runPlace();
 				// Put place back into queue
@@ -137,14 +135,14 @@ public class PetriNetEngine extends CyclicThread {
 			// get next place
 			place = (Place) Active_Places.pop();
 		}
-		LCD.drawInt((int) Possible_Transitions.size(), 8, 1);
+		//LCD.drawInt((int) Possible_Transitions.size(), 8, 1);
 		// Check all possibly firing transitions
 		while (!Possible_Transitions.empty()) {
 			transition = Possible_Transitions.pop();
-			LCD.drawChar('T', 5, 7);
+			//LCD.drawChar('T', 5, 7);
 			// If transition fires
 			if(transition.fireIfPossible()) {
-				LCD.drawChar('F', 5, 7);
+				//LCD.drawChar('F', 5, 7);
 				// push outgoing places onto the queue
 				Active_Places.pushArray(transition.getPlaces_Out());
 			}
@@ -156,7 +154,7 @@ public class PetriNetEngine extends CyclicThread {
 	 * @return success
 	 */
 	private boolean startNet() {
-		LCD.drawChar('S', 1, 7);
+		//LCD.drawChar('S', 1, 7);
 		// if no starting place set -> Error!
 		if (Starting_Place == null) {
 			StateMon.setNetState(NetStateMonitor.STATE_ERROR);
@@ -171,7 +169,7 @@ public class PetriNetEngine extends CyclicThread {
 			// insert starting place
 			Active_Places.push(Starting_Place);
 			// go and run!
-			LCD.drawChar('G', 2, 7);
+			//LCD.drawChar('G', 2, 7);
 			return true;
 		}
 	}

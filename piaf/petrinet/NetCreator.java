@@ -11,6 +11,7 @@ package piaf.petrinet;
 public abstract class NetCreator {
 	protected Place[] Places;
 	protected Transition[] Transitions;
+	protected boolean NetCreate_Success = true;
 	
 	/**
 	 * Connect two PetriNet Elements
@@ -19,10 +20,9 @@ public abstract class NetCreator {
 	 * @return success of the connection
 	 */
 	protected boolean connect(Place from_Place, Transition to_Transition) {
-		boolean success = true; 
-		success &= from_Place.setTransition(to_Transition);
-		success &= to_Transition.setPlace_In(from_Place);
-		return success;
+		NetCreate_Success &= from_Place.setTransition(to_Transition);
+		NetCreate_Success &= to_Transition.setPlace_In(from_Place);
+		return NetCreate_Success;
 	}
 	
 	/**
@@ -32,7 +32,8 @@ public abstract class NetCreator {
 	 * @return success of the connection
 	 */
 	protected boolean connect(Transition from_Transition, Place to_Place) {
-		return from_Transition.setPlace_Out(to_Place);
+		NetCreate_Success &= from_Transition.setPlace_Out(to_Place);
+		return NetCreate_Success;
 	}
 	
 	/**

@@ -4,10 +4,12 @@
 
 An automation framework and robot program for NXT-lejOS.
 
-### **piaf** - piaf is a automation framework
+### **piaf** - piaf is an automation framework
 
 A small framework that contains means to create sporadic and cyclic task and petri-nets in an object oriented way.
-Not yet finished...
+I've got also some ideas to use PNML to create net-(structure)s...
+
+More to come...
 
 ### **robot** - the C3LegO - cleaning robot
 

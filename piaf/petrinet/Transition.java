@@ -1,6 +1,5 @@
 package piaf.petrinet;
 
-import lejos.nxt.LCD;
 
 /**
  * @author mb
@@ -84,15 +83,15 @@ public class Transition {
 	public boolean fireIfPossible() {
 		// Not all of input places are active
 		if (!this.AllInPlacesActive()) { 
-			LCD.drawChar('A', 4, 4);
+			//LCD.drawChar('A', 4, 4);
 			return false;
 		// Firing condition is not met
 		} else if (! c.condition()) {
-			LCD.drawChar('C', 4, 4);
+			//LCD.drawChar('C', 4, 4);
 			return false;
 		// Fire!
 		} else {
-			LCD.drawChar('F', 4, 4);
+			//LCD.drawChar('F', 4, 4);
 			this.deactivateIncomingPlaces();
 			this.activateOutgoingPlaces();
 			return true;
