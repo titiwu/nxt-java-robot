@@ -14,7 +14,7 @@ public abstract class SporadicThread extends Thread {
 	private CommandQueue<Byte> Commands;
 	
 	
-	public SporadicThread(int priority, byte commandQueueLength) {
+	public SporadicThread(int priority, int commandQueueLength) {
 		super();
 		run        = true;
 		this.setPriority(priority);

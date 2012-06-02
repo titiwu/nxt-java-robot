@@ -22,7 +22,7 @@ public class PetriNetEngine extends CyclicThread {
 	private FixedSizeQueue<Place>      Active_Places;
 	private FixedSizeQueue<Transition> Possible_Transitions;
 	
-	private NetCreator nc;
+	private PetriNet nc;
 
 	/**
 	 * Constructor
@@ -31,7 +31,7 @@ public class PetriNetEngine extends CyclicThread {
 	 * @param cycle_Time Cycle Time of the PetriNet Thread
 	 * @param net a class implementing the NetCreator Interface
 	 */
-	public PetriNetEngine(int priority, int cycle_Time, NetCreator net) {
+	public PetriNetEngine(int priority, int cycle_Time, PetriNet net) {
 		super(priority, cycle_Time);
 		// set up queues
 		Active_Places        = new FixedSizeQueue<Place>(MAX_ACTIVE_PLACES);

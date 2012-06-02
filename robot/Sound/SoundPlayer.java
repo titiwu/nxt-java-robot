@@ -33,11 +33,11 @@ public class SoundPlayer extends SporadicThread {
 	 * @param priority
 	 */
 	private SoundPlayer(int priority) {
-		super(priority, (byte) 7);
+		super(priority, 7);
 	}
 
     /**
-     * Static method returns the instace of the class
+     * Static method returns the instance of the class
      */
     public static SoundPlayer getInstance() {
         return instance;

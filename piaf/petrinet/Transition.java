@@ -35,7 +35,7 @@ public class Transition {
 	 * @param Place place_in
 	 */
 	public boolean setPlace_In(Place place_in) {
-		byte i = 0;
+		int i = 0;
 		// Find next empty transition
 		while ((Places_In[i] != null) && (i < Nr_Of_Places_In)) {
 			i += 1;
@@ -54,7 +54,7 @@ public class Transition {
 	 * @param Place place_in
 	 */
 	public boolean setPlace_Out(Place place_out) {
-		byte i = 0;
+		int i = 0;
 		// Find next empty transition
 		while ((Places_Out[i] != null) && (i < Nr_Of_Places_Out)) {
 			i += 1;
@@ -104,7 +104,7 @@ public class Transition {
 	 */
 	private boolean AllInPlacesActive() {
 		boolean all_active = true;
-		for (byte i = 0; i < this.Places_In.length; i++) {
+		for (int i = 0; i < this.Places_In.length; i++) {
 			all_active = all_active && this.Places_In[i].isActive();
 		}
 		return all_active;
@@ -114,7 +114,7 @@ public class Transition {
 	 * Activates all outgoing places
 	 */
 	private void activateOutgoingPlaces() {
-		for (byte i = 0; i < this.Places_Out.length; i++) {
+		for (int i = 0; i < this.Places_Out.length; i++) {
 			this.Places_Out[i].Activate();
 		}
 	}
@@ -123,7 +123,7 @@ public class Transition {
 	 * Deactivates all incoming places
 	 */
 	private void deactivateIncomingPlaces() {
-		for (byte i = 0; i < this.Places_In.length; i++) {
+		for (int i = 0; i < this.Places_In.length; i++) {
 			this.Places_In[i].Deactivate();
 		}
 	}

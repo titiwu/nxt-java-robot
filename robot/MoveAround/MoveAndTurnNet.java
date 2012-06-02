@@ -2,19 +2,19 @@ package robot.MoveAround;
 
 import java.util.Random;
 
-
+import lejos.nxt.Motor;
 import lejos.nxt.MotorPort;
 import lejos.nxt.NXTRegulatedMotor;
 import lejos.nxt.SensorPort;
 import lejos.nxt.TouchSensor;
-import piaf.petrinet.NetCreator;
+import piaf.petrinet.PetriNet;
 import piaf.petrinet.Place;
 import piaf.petrinet.PlaceActions;
 import piaf.petrinet.Transition;
 import piaf.petrinet.TransitionCondition;
 import robot.Sound.SoundPlayer;
 
-public class MoveAndTurnNet  extends NetCreator {
+public class MoveAndTurnNet  extends PetriNet {
 	private NXTRegulatedMotor WheelLeft;
 	private NXTRegulatedMotor WheelRight;
 	private SoundPlayer       SoundMgr;
@@ -25,8 +25,8 @@ public class MoveAndTurnNet  extends NetCreator {
 	public final static int Speed = 360;
 	
 	public MoveAndTurnNet() {
-		WheelRight = new NXTRegulatedMotor(MotorPort.A);
-		WheelLeft  = new NXTRegulatedMotor(MotorPort.B);
+		WheelRight = Motor.A;
+		WheelLeft  = Motor.B;
 		SoundMgr   = SoundPlayer.getInstance();
 		TouchRight = new TouchSensor(SensorPort.S1);
 		TouchLeft  = new TouchSensor(SensorPort.S2);
@@ -146,7 +146,7 @@ public class MoveAndTurnNet  extends NetCreator {
 	
 	public class TurnDone implements TransitionCondition {
 		/**
-		 * True if none Motor is moving
+		 * True if no Motor is moving
 		 */
 		@Override
 		public boolean condition() {
@@ -156,14 +156,14 @@ public class MoveAndTurnNet  extends NetCreator {
 	
 	
 	/****************************** Connections *****************************/
+	
 	@Override
-	public boolean createNet() {
-		boolean success = true;
+	protected void buildNetStructure() {
 		Places      = new Place[3];
 		Transitions = new Transition[5];
 		
-		// Create instances
-		Places[0] = new Place((byte) 3, new Move());
+		// Create Instances
+		Places[1] = new Place((byte) 3, new Move());
 		Places[1] = new Place((byte) 1, new TurnRight());
 		Places[2] = new Place((byte) 1, new TurnLeft());
 		
@@ -173,21 +173,14 @@ public class MoveAndTurnNet  extends NetCreator {
 		Transitions[3] = new Transition((byte) 1, (byte) 1, new TurnDone()); 
 		Transitions[4] = new Transition((byte) 1, (byte) 1, new TurnDone()); 
 		
-		// Create connections
-		success &= connect(Places[0], Transitions[0]);	
-		success &= connect(Places[0], Transitions[1]);	
-		success &= connect(Places[0], Transitions[2]);
+		connect(Places[0], Transitions[0], Places[2]);
+		connect(Places[0], Transitions[1], Places[1]);
+		connect(Places[0], Transitions[2], Places[2]);
 		
-		success &= connect(Transitions[0], Places[2]);	
-		success &= connect(Transitions[1], Places[1]);
-		success &= connect(Transitions[2], Places[2]);
+		connect(Places[1], Transitions[3], Places[0]);	
 		
-		success &= connect(Places[1], Transitions[3]);	
-		success &= connect(Places[2], Transitions[4]);
+		connect(Places[2], Transitions[4], Places[0]);
 		
-		success &= connect(Transitions[3], Places[0]);
-		success &= connect(Transitions[4], Places[0]);
-		return success;
 	}
 	
 	@Override
@@ -199,5 +192,7 @@ public class MoveAndTurnNet  extends NetCreator {
 		WheelLeft.flt(true);
 		WheelRight.flt(true);
 	}
+
+
 
 }

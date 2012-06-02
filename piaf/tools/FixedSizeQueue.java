@@ -11,13 +11,13 @@ import java.util.EmptyQueueException;
 public class FixedSizeQueue<E> {
 	
 	private E[] Queue;
-	private byte First_Element;
-	private byte Last_Element;
-	private byte Size;
-	private byte Max_Size;
+	private int First_Element;
+	private int Last_Element;
+	private int Size;
+	private int Max_Size;
 	
 	@SuppressWarnings("unchecked")
-	public FixedSizeQueue(byte max_Size) {
+	public FixedSizeQueue(int max_Size) {
 		Max_Size      = max_Size;
 		Queue         = (E[]) new Object[Max_Size];
 		clear();
@@ -31,7 +31,7 @@ public class FixedSizeQueue<E> {
     public synchronized boolean push(E anObject) {
     	// add the object to array if space left
     	if (size() < Max_Size) {
-	    	Last_Element = (byte) ((Last_Element + 1 ) % Max_Size);
+	    	Last_Element = (Last_Element + 1 ) % Max_Size;
 	    	Queue[Last_Element] = anObject;
 	    	Size++;
 	    	return true;
@@ -48,7 +48,7 @@ public class FixedSizeQueue<E> {
     public synchronized boolean pushArray (E[] objectArray) {
     	// add the object to array if space left
     	if ((size() + objectArray.length) < Max_Size) {
-    		for(byte i = 0; i <  objectArray.length; i++) {
+    		for(int i = 0; i <  objectArray.length; i++) {
     			push(objectArray[i]);
     		}
 	    	return true;
@@ -67,7 +67,7 @@ public class FixedSizeQueue<E> {
 		// get object
 		E popped = peek();
 		// remove (move First Element number) 
-		First_Element = (byte) ((First_Element + 1 ) % Max_Size);
+		First_Element = (First_Element + 1 ) % Max_Size;
 		Size--;
 		// and return object
 		return popped;
@@ -98,9 +98,9 @@ public class FixedSizeQueue<E> {
     
 	/**
 	 * Number of elements in the queue
-	 * @return byte nr of elements in the queue
+	 * @return int nr of elements in the queue
 	 */
-    public byte size() {
+    public int size() {
     	return Size;
     }
     

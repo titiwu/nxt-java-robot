@@ -54,7 +54,7 @@ public class Place {
 	 * @param BaseTransisition transition
 	 */
 	public boolean setTransition(Transition transition) {
-		byte i = 0;
+		int i = 0;
 		// Find next empty transition
 		while ((Transitions[i] != null) && (i < Nr_Of_Transitions_Out)) {
 			i += 1;

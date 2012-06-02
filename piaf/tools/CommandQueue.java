@@ -15,7 +15,7 @@ public class CommandQueue<E> {
 	 * 
 	 * @param queue_size How long can the queue be?
 	 */
-	public CommandQueue(byte queue_size) {
+	public CommandQueue(int queue_size) {
 		super();
 		cq = new FixedSizeQueue<E>(queue_size);
 	}
