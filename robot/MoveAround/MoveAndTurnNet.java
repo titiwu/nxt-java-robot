@@ -3,7 +3,6 @@ package robot.MoveAround;
 import java.util.Random;
 
 import lejos.nxt.Motor;
-import lejos.nxt.MotorPort;
 import lejos.nxt.NXTRegulatedMotor;
 import lejos.nxt.SensorPort;
 import lejos.nxt.TouchSensor;
@@ -33,8 +32,8 @@ public class MoveAndTurnNet  extends PetriNet {
 		RandomNr   = new Random();
 		WheelLeft.setSpeed(Speed);
 		WheelRight.setSpeed(Speed);
-		WheelLeft.setAcceleration(3000);
-		WheelRight.setAcceleration(3000);
+		WheelLeft.setAcceleration(2000);
+		WheelRight.setAcceleration(2000);
 	}
 
 	/****************************** Places *****************************/
@@ -52,7 +51,8 @@ public class MoveAndTurnNet  extends PetriNet {
 
 		@Override
 		public void actionExit() {
-			stopAction();
+			WheelLeft.stop(true);
+			WheelRight.stop(true);
 			SoundMgr.putCommand(SoundPlayer.DoubleBeep);
 		}
 
@@ -159,27 +159,26 @@ public class MoveAndTurnNet  extends PetriNet {
 	
 	@Override
 	protected void buildNetStructure() {
-		Places      = new Place[3];
-		Transitions = new Transition[5];
+		// Set field sizes
+		setSizes(3, 5);
 		
 		// Create Instances
-		Places[1] = new Place((byte) 3, new Move());
-		Places[1] = new Place((byte) 1, new TurnRight());
-		Places[2] = new Place((byte) 1, new TurnLeft());
+		int P_Move      = CreatePlace( 3, new Move());
+		int P_TurnRight = CreatePlace( 1, new TurnRight());
+		int P_TurnLeft  = CreatePlace( 1, new TurnLeft());
 		
-		Transitions[0] = new Transition((byte) 1, (byte) 1, new WallTouchedLeft()); 
-		Transitions[1] = new Transition((byte) 1, (byte) 1, new WallTouchedRight()); 
-		Transitions[2] = new Transition((byte) 1, (byte) 1, new WallTouchedMiddle()); 
-		Transitions[3] = new Transition((byte) 1, (byte) 1, new TurnDone()); 
-		Transitions[4] = new Transition((byte) 1, (byte) 1, new TurnDone()); 
+		int T_TouchLeft     = CreateTransition(1, 1, new WallTouchedLeft()); 
+		int T_TouchRight    = CreateTransition(1, 1, new WallTouchedRight()); 
+		int T_TouchMiddle   = CreateTransition(1, 1, new WallTouchedMiddle()); 
+		int T_LeftTurnDone  = CreateTransition(1, 1, new TurnDone()); 
+		int T_RightTurnDone = CreateTransition(1, 1, new TurnDone()); 
 		
-		connect(Places[0], Transitions[0], Places[2]);
-		connect(Places[0], Transitions[1], Places[1]);
-		connect(Places[0], Transitions[2], Places[2]);
+		connect(P_Move, T_TouchLeft, P_TurnLeft);
+		connect(P_Move, T_TouchRight, P_TurnRight);
+		connect(P_Move, T_TouchMiddle, P_TurnLeft);
 		
-		connect(Places[1], Transitions[3], Places[0]);	
-		
-		connect(Places[2], Transitions[4], Places[0]);
+		connect(P_TurnRight, T_RightTurnDone, P_Move);	
+		connect(P_TurnLeft, T_LeftTurnDone, P_Move);
 		
 	}
 	
@@ -188,10 +187,16 @@ public class MoveAndTurnNet  extends PetriNet {
 		return Places[0];
 	}
 	
+	@Override
+	public Place getStoppingPlace() {
+		return Places[0];
+	}
+	
 	public void stop() {
 		WheelLeft.flt(true);
 		WheelRight.flt(true);
 	}
+
 
 
 

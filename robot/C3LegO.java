@@ -31,14 +31,18 @@ public class C3LegO {
 		SoundThread.start();
 	    Engine.start();
 	    
+	    System.out.println("Started");
+	    
 	    Button.waitForAnyPress();
 	    Engine.setCommand(NetStateMonitor.COMMAND_RUN);
 	    SoundThread.putCommand(SoundPlayer.Ascending);
+	    System.out.println("Running");
 	    Button.waitForAnyPress();
-	    Engine.setCommand(NetStateMonitor.COMMAND_STOP_CYC_END);
+	    Engine.setCommand(NetStateMonitor.COMMAND_RUN_TO_STOP);
 	    SoundThread.putCommand(SoundPlayer.Descending);
+	    System.out.println("Stopping");
 	    Button.waitForAnyPress();
-	    
+	    System.out.println("Shutdown");
 	    Engine.stop();
 		SoundThread.stop();
 		MoveAndTurn.stop();

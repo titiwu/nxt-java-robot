@@ -16,13 +16,14 @@ public class PetriNetEngine extends CyclicThread {
 	
 	private NetStateMonitor StateMon;
 	
-	private Place Starting_Place;
-	private boolean Starting_Place_was_deactivated;
+	private Place StartingPlace;
+	private Place StoppingPlace;
+	private boolean Stopping_Place_was_deactivated;
 	
 	private FixedSizeQueue<Place>      Active_Places;
 	private FixedSizeQueue<Transition> Possible_Transitions;
 	
-	private PetriNet nc;
+	private PetriNet __Net;
 
 	/**
 	 * Constructor
@@ -39,12 +40,17 @@ public class PetriNetEngine extends CyclicThread {
 		
 		StateMon             = new NetStateMonitor();
 		
-		nc = net;
+		__Net = net;
 		// create the net
-		nc.createNet();
+		__Net.createNet();
 		
 		// get starting place
-		Starting_Place = nc.getStartingPlace();
+		StartingPlace = __Net.getStartingPlace();
+		StoppingPlace = __Net.getStoppingPlace();
+		
+		if (!__Net.checkNet()) {
+			StateMon.setNetState(NetStateMonitor.STATE_ERROR);
+		} 
 	}
 	
 	/**
@@ -76,33 +82,36 @@ public class PetriNetEngine extends CyclicThread {
 			// if no starting place set -> Error!
 			if (this.startNet()) {
 				StateMon.setNetState(NetStateMonitor.STATE_RUNNING);
+			} else {
+				StateMon.setNetState(NetStateMonitor.STATE_ERROR);
 			}
 		} else if (NetState == NetStateMonitor.STATE_START_1_CYC) { /////////////// Starting single cycle run
 			if (this.startNet()) {
-				StateMon.setNetState(NetStateMonitor.STATE_LAST_CYC);
+				StateMon.setNetState(NetStateMonitor.STATE_RUN_TO_STOP);
 			}
 		} else if (NetState == NetStateMonitor.STATE_RUNNING) {     /////////////// Running
 			this.runNet();
-		} else if (NetState == NetStateMonitor.STATE_LAST_CYC) {    /////////////// Run last cycle
-			// Starting place still active or already deactivated
-			if(( Starting_Place_was_deactivated && !Starting_Place.isActive()) ||
-			   (!Starting_Place_was_deactivated &&  Starting_Place.isActive())) {
+		} else if (NetState == NetStateMonitor.STATE_RUN_TO_STOP) {    /////////////// Run last cycle
+			// In case the stopping place is active at the moment -> stop next time it becomes active
+			// Needed if stopping = starting place
+			if (StoppingPlace.isActive() && !Stopping_Place_was_deactivated)	{
 				this.runNet();
-			// Starting place became deactivated
-			} else if(!Starting_Place_was_deactivated && !Starting_Place.isActive()) {
-				//LCD.drawChar('L', 6, 7);
+			} else if (!StoppingPlace.isActive()) {
+				// Stopping Place is deactivated: continue to run but remember this
 				this.runNet();
-				Starting_Place_was_deactivated = true;
-			// Starting place again active -> Cycle end reached!
-			} else if(Starting_Place_was_deactivated && Starting_Place.isActive()) { 
-				// Stop all possible ongoing movements
-				//LCD.drawChar('Q', 7, 7);
-				StateMon.setNetState(NetStateMonitor.STATE_QUIT);
+				Stopping_Place_was_deactivated = true;
+			} else {
+				// Stopping place is active -> stop it!
+				this.emergencyStop();
+				StateMon.setNetState(NetStateMonitor.STATE_STOPPED);
 			}
 		} else if (NetState == NetStateMonitor.STATE_QUIT) {        //////////////// Force quit/emergency stop
 			this.emergencyStop();
 			StateMon.setNetState(NetStateMonitor.STATE_STOPPED);
+		} else if (NetState == NetStateMonitor.STATE_PAUSE) {        //////////////// Paused
+			// Do nothing and wait for external activation
 		} else {
+			// ERROR!!
 			// We have a problem...
 			//LCD.drawChar('E', 8, 7);
 		}
@@ -156,18 +165,17 @@ public class PetriNetEngine extends CyclicThread {
 	private boolean startNet() {
 		//LCD.drawChar('S', 1, 7);
 		// if no starting place set -> Error!
-		if (Starting_Place == null) {
-			StateMon.setNetState(NetStateMonitor.STATE_ERROR);
+		if (StartingPlace == null) {
 			return false;
 		} else {
 			// Reset last cycle flag and empty queues
-			Starting_Place_was_deactivated = false;
+			Stopping_Place_was_deactivated = false;
 			Active_Places.clear();
 			Possible_Transitions.clear();
 			// Activate starting place
-			Starting_Place.Activate();
+			StartingPlace.Activate();
 			// insert starting place
-			Active_Places.push(Starting_Place);
+			Active_Places.push(StartingPlace);
 			// go and run!
 			//LCD.drawChar('G', 2, 7);
 			return true;
