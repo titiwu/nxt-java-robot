@@ -26,7 +26,7 @@ public class C3LegO {
 		
 		MoveAndTurnNet MoveAndTurn = new MoveAndTurnNet();
 		
-		PetriNetEngine Engine   = new PetriNetEngine(Thread.NORM_PRIORITY, 100, MoveAndTurn);
+		PetriNetEngine Engine   = new PetriNetEngine(Thread.NORM_PRIORITY, 50, MoveAndTurn);
 		
 		SoundThread.start();
 	    Engine.start();

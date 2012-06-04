@@ -15,12 +15,17 @@ public class Place {
 	private int Last_Startup_Time;
 
 	private byte Nr_Of_Transitions_Out;
+
 	private Transition[] Transitions;
 	
 	private PlaceActions a;
 	
 	// Activity indication
 	private boolean Active;
+	
+	public byte getNr_Of_Transitions_Out() {
+		return Nr_Of_Transitions_Out;
+	}
 	
 	/**
 	 * Constructor

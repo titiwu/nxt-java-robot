@@ -17,6 +17,14 @@ public class Transition {
 	
 	private TransitionCondition c;
 
+	public byte getNr_Of_Places_In() {
+		return Nr_Of_Places_In;
+	}
+
+	public byte getNr_Of_Places_Out() {
+		return Nr_Of_Places_Out;
+	}
+	
 	/**
 	 * @param nr_Of_Places_In
 	 * @param nr_Of_Places_Out

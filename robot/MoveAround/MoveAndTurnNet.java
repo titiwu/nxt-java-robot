@@ -7,9 +7,7 @@ import lejos.nxt.NXTRegulatedMotor;
 import lejos.nxt.SensorPort;
 import lejos.nxt.TouchSensor;
 import piaf.petrinet.PetriNet;
-import piaf.petrinet.Place;
 import piaf.petrinet.PlaceActions;
-import piaf.petrinet.Transition;
 import piaf.petrinet.TransitionCondition;
 import robot.Sound.SoundPlayer;
 
@@ -158,46 +156,39 @@ public class MoveAndTurnNet  extends PetriNet {
 	/****************************** Connections *****************************/
 	
 	@Override
-	protected void buildNetStructure() {
-		// Set field sizes
-		setSizes(3, 5);
+	protected void buildNetStructure(NetCreator Net) {
 		
 		// Create Instances
-		int P_Move      = CreatePlace( 3, new Move());
-		int P_TurnRight = CreatePlace( 1, new TurnRight());
-		int P_TurnLeft  = CreatePlace( 1, new TurnLeft());
+		PlaceID P_Move      = Net.CreatePlace(new Move());
+		PlaceID P_TurnRight = Net.CreatePlace(new TurnRight());
+		PlaceID P_TurnLeft  = Net.CreatePlace(new TurnLeft());
 		
-		int T_TouchLeft     = CreateTransition(1, 1, new WallTouchedLeft()); 
-		int T_TouchRight    = CreateTransition(1, 1, new WallTouchedRight()); 
-		int T_TouchMiddle   = CreateTransition(1, 1, new WallTouchedMiddle()); 
-		int T_LeftTurnDone  = CreateTransition(1, 1, new TurnDone()); 
-		int T_RightTurnDone = CreateTransition(1, 1, new TurnDone()); 
+		TransitionID T_TouchLeft     = Net.CreateTransition(new WallTouchedLeft()); 
+		TransitionID T_TouchRight    = Net.CreateTransition(new WallTouchedRight()); 
+		TransitionID T_TouchMiddle   = Net.CreateTransition(new WallTouchedMiddle()); 
+		TransitionID T_LeftTurnDone  = Net.CreateTransition(new TurnDone()); 
+		TransitionID T_RightTurnDone = Net.CreateTransition(new TurnDone()); 
 		
-		connect(P_Move, T_TouchLeft, P_TurnLeft);
-		connect(P_Move, T_TouchRight, P_TurnRight);
-		connect(P_Move, T_TouchMiddle, P_TurnLeft);
+		// Connections
+		Net.connect(P_Move, T_TouchLeft);
+		Net.connect(T_TouchLeft, P_TurnLeft);
+		Net.connect(P_Move, T_TouchRight);
+		Net.connect(T_TouchRight, P_TurnRight);
+		Net.connect(P_Move, T_TouchMiddle);
+		Net.connect(T_TouchMiddle, P_TurnLeft);
+
+		Net.connect(P_TurnRight, T_RightTurnDone);
+		Net.connect(T_RightTurnDone, P_Move);
+		Net.connect(P_TurnLeft, T_LeftTurnDone);
+		Net.connect(T_LeftTurnDone, P_Move);
 		
-		connect(P_TurnRight, T_RightTurnDone, P_Move);	
-		connect(P_TurnLeft, T_LeftTurnDone, P_Move);
-		
-	}
-	
-	@Override
-	public Place getStartingPlace() {
-		return Places[0];
-	}
-	
-	@Override
-	public Place getStoppingPlace() {
-		return Places[0];
+		setStartingPlace(P_Move);
+		setStoppingPlace(P_Move);
 	}
 	
 	public void stop() {
 		WheelLeft.flt(true);
 		WheelRight.flt(true);
 	}
-
-
-
 
 }
