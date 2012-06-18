@@ -11,7 +11,7 @@ package piaf.petrinet;
  * and the instances the places and transitions
  * 
  * A possibility is to generate a skeleton of a subclass 
- * from an PNML, or even generate the net by paring such a 
+ * from an PNML, or even generate the net by parsing such a 
  * file at runtime.
  * 
  * @author mb
@@ -23,17 +23,17 @@ public abstract class PetriNet {
 	private final static byte OUT = 1;
 	
 	
-	protected Place[]      Places;
-	protected Transition[] Transitions;
+	protected Place[]      _places;
+	protected Transition[] _transitions;
 	
-	protected boolean NetCreate_Success = true;
+	protected boolean _net_create_success = true;
 	
-	private byte[]   Nr_of_out_transitions_for_place;
-	private byte[][] Nr_of_in_out_places_for_transition;
-	private int      Nr_of_Places      = 0;
-	private int      Nr_of_Transitions = 0;
-	private PlaceID  StartingPlace;
-	private PlaceID  StoppingPlace;
+	private byte[]   __nr_of_out_transitions_for_place;
+	private byte[][] __nr_of_in_out_places_for_transition;
+	private int      __nr_of_places      = 0;
+	private int      __nr_of_transitions = 0;
+	private PlaceID  __starting_place;
+	private PlaceID  __stopping_place;
 	
 	public class PlaceID {
 		
@@ -72,14 +72,14 @@ public abstract class PetriNet {
 
 		@Override
 		public PlaceID CreatePlace(PlaceActions actions) {
-			Nr_of_Places += 1;
-			return new PlaceID(Nr_of_Places -1);
+			__nr_of_places += 1;
+			return new PlaceID(__nr_of_places -1);
 		}
 
 		@Override
 		public TransitionID CreateTransition(TransitionCondition condition) {
-			Nr_of_Transitions += 1;
-			return new TransitionID(Nr_of_Transitions -1);
+			__nr_of_transitions += 1;
+			return new TransitionID(__nr_of_transitions -1);
 		}
 
 		@Override
@@ -126,8 +126,8 @@ public abstract class PetriNet {
 		 */
 		@Override
 		public boolean connect(PlaceID from_Place, TransitionID to_Transition) {
-			Nr_of_out_transitions_for_place[from_Place.ID]           += 1;
-			Nr_of_in_out_places_for_transition[to_Transition.ID][IN] += 1;
+			__nr_of_out_transitions_for_place[from_Place.ID]           += 1;
+			__nr_of_in_out_places_for_transition[to_Transition.ID][IN] += 1;
 			return true;
 		}
 		
@@ -137,7 +137,7 @@ public abstract class PetriNet {
 		 */
 		@Override
 		public boolean connect(TransitionID from_Transition, PlaceID to_Place) {
-			Nr_of_in_out_places_for_transition[from_Transition.ID][OUT] += 1;
+			__nr_of_in_out_places_for_transition[from_Transition.ID][OUT] += 1;
 			return true;
 		}
 		
@@ -156,7 +156,7 @@ public abstract class PetriNet {
 		 */
 		@Override
 		public PlaceID CreatePlace(PlaceActions actions) {
-			Places[PlaceCounter] = new Place((byte) Nr_of_out_transitions_for_place[PlaceCounter], actions);
+			_places[PlaceCounter] = new Place((byte) __nr_of_out_transitions_for_place[PlaceCounter], actions);
 			PlaceCounter += 1;
 			return new PlaceID(PlaceCounter - 1);
 		}
@@ -169,8 +169,8 @@ public abstract class PetriNet {
 		 */
 		@Override
 		public TransitionID CreateTransition(TransitionCondition condition) {
-			Transitions[TransitionCounter] = new Transition( Nr_of_in_out_places_for_transition[TransitionCounter][0], 
-															 Nr_of_in_out_places_for_transition[TransitionCounter][1], 
+			_transitions[TransitionCounter] = new Transition( __nr_of_in_out_places_for_transition[TransitionCounter][0], 
+															 __nr_of_in_out_places_for_transition[TransitionCounter][1], 
 															 condition);
 			TransitionCounter += 1;
 			return new TransitionID(TransitionCounter - 1);
@@ -181,8 +181,8 @@ public abstract class PetriNet {
 		 */
 		@Override
 		public boolean connect(PlaceID from_Place, TransitionID to_Transition) {
-			PetriNet.this.connect(Places[from_Place.ID], Transitions[to_Transition.ID]);
-			return NetCreate_Success;
+			PetriNet.this.connect(_places[from_Place.ID], _transitions[to_Transition.ID]);
+			return _net_create_success;
 		}
 		
 		/**
@@ -190,8 +190,8 @@ public abstract class PetriNet {
 		 */
 		@Override
 		public boolean connect(TransitionID from_Transition, PlaceID to_Place) {
-			PetriNet.this.connect(Transitions[from_Transition.ID], Places[to_Place.ID]);
-			return NetCreate_Success;
+			PetriNet.this.connect(_transitions[from_Transition.ID], _places[to_Place.ID]);
+			return _net_create_success;
 		}
 		
 	}
@@ -203,10 +203,10 @@ public abstract class PetriNet {
 	 * @param nr_of_transitions
 	 */
 	protected void setSizes(int nr_of_places, int nr_of_transitions) {
-		Places      = new Place[nr_of_places];
-		Transitions = new Transition[nr_of_transitions];
-		Nr_of_out_transitions_for_place    = new byte[nr_of_places];
-		Nr_of_in_out_places_for_transition = new byte[nr_of_transitions][2];
+		_places      = new Place[nr_of_places];
+		_transitions = new Transition[nr_of_transitions];
+		__nr_of_out_transitions_for_place    = new byte[nr_of_places];
+		__nr_of_in_out_places_for_transition = new byte[nr_of_transitions][2];
 		
 	}
 	
@@ -217,9 +217,9 @@ public abstract class PetriNet {
 	 * @return success of the connection
 	 */
 	protected boolean connect(Place from_Place, Transition to_Transition) {
-		NetCreate_Success &= from_Place.setTransition(to_Transition);
-		NetCreate_Success &= to_Transition.setPlace_In(from_Place);
-		return NetCreate_Success;
+		_net_create_success &= from_Place.setTransition(to_Transition);
+		_net_create_success &= to_Transition.setPlaceIn(from_Place);
+		return _net_create_success;
 	}
 	
 	/**
@@ -229,8 +229,8 @@ public abstract class PetriNet {
 	 * @return success of the connection
 	 */
 	protected boolean connect(Transition from_Transition, Place to_Place) {
-		NetCreate_Success &= from_Transition.setPlace_Out(to_Place);
-		return NetCreate_Success;
+		_net_create_success &= from_Transition.setPlaceOut(to_Place);
+		return _net_create_success;
 	}
 	
 	/**
@@ -243,7 +243,7 @@ public abstract class PetriNet {
 	protected boolean connect(Place from_Place, Transition over_Transition, Place to_Place) {
 		connect(from_Place, over_Transition);
 		connect(over_Transition, to_Place);
-		return NetCreate_Success;
+		return _net_create_success;
 	}
 	
 	/**
@@ -253,26 +253,26 @@ public abstract class PetriNet {
 	protected boolean checkNet() {
 	
 		// Valid starting place?
-		if (StartingPlace.ID < 0 || StartingPlace.ID >= Nr_of_Places) {
+		if (__starting_place.ID < 0 || __starting_place.ID >= __nr_of_places) {
 			return false; // No/wrong starting place set!
 		}
 		
 		// Valid stopping place?
-		if (StoppingPlace.ID < 0 || StoppingPlace.ID >= Nr_of_Places) {
+		if (__stopping_place.ID < 0 || __stopping_place.ID >= __nr_of_places) {
 			return false; // No/wrong stopping place set!
 		}
 		
 		// Any transition without in-place or out-place?
-		for (Transition T : Transitions) {
-		    if (T.getNr_Of_Places_Out() < 1 || T.getNr_Of_Places_In() < 1) {
+		for (Transition T : _transitions) {
+		    if (T.getNrOfPlacesOut() < 1 || T.getNrOfPlacesIn() < 1) {
 		    	return false;
 		    }
 		}
 		
 		// Any place (that is not the stopping place)
 		// without outgoing connection?
-		for (Place P : Places) {
-			if(P.getNr_Of_Transitions_Out() < 1 && !P.equals(Places[StoppingPlace.ID])) {
+		for (Place P : _places) {
+			if(P.getNrOfTransitionsOut() < 1 && !P.equals(_places[__stopping_place.ID])) {
 		    	return false;
 			}
 		}
@@ -290,13 +290,13 @@ public abstract class PetriNet {
 		// Count how many places and transition are in the net
 		buildNetStructure(new CountPlacesAndTransitions());
 		//Create the arrays for them
-		setSizes(Nr_of_Places, Nr_of_Transitions);
+		setSizes(__nr_of_places, __nr_of_transitions);
 		// Count the connections for each place and transition
 		buildNetStructure(new CountConnections());
 		// Create the objects and connect places and transitions
 		buildNetStructure(new CreatePlacesAndTransitions());
 		
-		return NetCreate_Success;
+		return _net_create_success;
 	}
 	
 	/**
@@ -316,14 +316,14 @@ public abstract class PetriNet {
 	 * setStoppingPlace(MyPlace2);
 	 * 
 	 */
-	protected abstract void buildNetStructure(NetCreator Net);
+	protected abstract void buildNetStructure(NetCreator net);
 	
 	/**
 	 * Returns the starting Place
 	 * @return Place to start
 	 */
 	public Place getStartingPlace() {
-		return Places[StartingPlace.ID];
+		return _places[__starting_place.ID];
 	}
 	
 	/**
@@ -332,7 +332,7 @@ public abstract class PetriNet {
 	 * @param starting_place
 	 */
 	protected void setStartingPlace(PlaceID starting_place) {
-		StartingPlace = starting_place;
+		__starting_place = starting_place;
 	}
 	
 	/**
@@ -340,7 +340,7 @@ public abstract class PetriNet {
 	 * @return Place to stop at
 	 */
 	public Place getStoppingPlace() {
-		return Places[StoppingPlace.ID];
+		return _places[__stopping_place.ID];
 	}
 	
 	/**
@@ -349,6 +349,6 @@ public abstract class PetriNet {
 	 * @param starting_place
 	 */
 	protected void setStoppingPlace(PlaceID stopping_place) {
-		StoppingPlace = stopping_place;
+		__stopping_place = stopping_place;
 	}
 }

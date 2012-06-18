@@ -1,7 +1,7 @@
 package robot;
 
 import piaf.petrinet.NetStateMonitor;
-import piaf.petrinet.PetriNetEngine;
+import piaf.petrinet.PetriNetThread;
 import robot.MoveAround.MoveAndTurnNet;
 import robot.Sound.SoundPlayer;
 import lejos.nxt.Button;
@@ -26,7 +26,7 @@ public class C3LegO {
 		
 		MoveAndTurnNet MoveAndTurn = new MoveAndTurnNet();
 		
-		PetriNetEngine Engine   = new PetriNetEngine(Thread.NORM_PRIORITY, 50, MoveAndTurn);
+		PetriNetThread Engine   = new PetriNetThread(Thread.NORM_PRIORITY, 50, MoveAndTurn);
 		
 		SoundThread.start();
 	    Engine.start();

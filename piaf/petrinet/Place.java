@@ -10,40 +10,40 @@ package piaf.petrinet;
  */
 public class Place {
 	// Times
-	private int Last_Active_Duration;
+	private int __last_active_duration;
 	
-	private int Last_Startup_Time;
+	private int __last_startup_time;
 
-	private byte Nr_Of_Transitions_Out;
+	private byte __nr_of_transitions_out;
 
-	private Transition[] Transitions;
+	private Transition[] __transitions;
 	
-	private PlaceActions a;
+	private PlaceActions __a;
 	
 	// Activity indication
-	private boolean Active;
+	private boolean __active;
 	
-	public byte getNr_Of_Transitions_Out() {
-		return Nr_Of_Transitions_Out;
+	public byte getNrOfTransitionsOut() {
+		return __nr_of_transitions_out;
 	}
 	
 	/**
 	 * Constructor
-	 * @param nr_Of_Transitions_Out
+	 * @param nr_of_transitions_out
 	 * @param actions
 	 */
-	public Place(byte nr_Of_Transitions_Out, PlaceActions actions) {
-		Nr_Of_Transitions_Out = nr_Of_Transitions_Out;
-		Transitions           = new Transition[Nr_Of_Transitions_Out];
-		a                     = actions;
+	public Place(byte nr_of_transitions_out, PlaceActions actions) {
+		__nr_of_transitions_out = nr_of_transitions_out;
+		__transitions           = new Transition[__nr_of_transitions_out];
+		__a                     = actions;
 	}
 	
 	/**
-	 * Get how many ms the Transition was active the last time
+	 * Get how many ms the transition was active the last time
 	 * @return int
 	 */
-	public int getLast_Active_Duration() {
-		return Last_Active_Duration;
+	public int getLastActiveDuration() {
+		return __last_active_duration;
 	}
 	
 	/**
@@ -51,7 +51,7 @@ public class Place {
 	 * @return BaseTransition
 	 */
 	public Transition[] getTransitions() {
-		return Transitions;
+		return __transitions;
 	}
 
 	/**
@@ -61,12 +61,12 @@ public class Place {
 	public boolean setTransition(Transition transition) {
 		int i = 0;
 		// Find next empty transition
-		while ((Transitions[i] != null) && (i < Nr_Of_Transitions_Out)) {
+		while ((__transitions[i] != null) && (i < __nr_of_transitions_out)) {
 			i += 1;
 		}
 		// Save connection or fail
-		if (i < Nr_Of_Transitions_Out) {
-			Transitions[i] = transition;
+		if (i < __nr_of_transitions_out) {
+			__transitions[i] = transition;
 			return true;
 		} else {
 			return false;
@@ -78,37 +78,37 @@ public class Place {
 	 * @return boolean
 	 */
 	public boolean isActive() {
-		return Active;
+		return __active;
 	}
 	
 	/**
-	 * Activates the place (puts a mark on it)
+	 * Activates the place (puts a token on it)
 	 */
-	public void Activate() {
-		Last_Startup_Time = (int) System.currentTimeMillis();
-		a.actionOnEntry();
-		Active = true;
+	public void activate() {
+		__last_startup_time = (int) System.currentTimeMillis();
+		__a.actionOnEntry();
+		__active = true;
 	}
 	
 	/**
-	 * Deactivates the places (removes a mark from it)
+	 * Deactivates the places (removes a token from it)
 	 */
-	public void Deactivate() {
-		a.actionExit();
-		Last_Active_Duration = (int) System.currentTimeMillis() - Last_Startup_Time;
-		Active = false;
+	public void deactivate() {
+		__a.actionExit();
+		__last_active_duration = (int) System.currentTimeMillis() - __last_startup_time;
+		__active = false;
 	}
 	
 	/**
 	 * Executes the places actual action
 	 */
 	public void runPlace() {
-		a.actionWhileActive();
+		__a.actionWhileActive();
 	}
 	
 	public void emergencyExit() {
-		a.stopAction();
-		Active = false;
+		__a.stopAction();
+		__active = false;
 	}
 	
 }
