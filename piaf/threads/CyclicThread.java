@@ -44,7 +44,7 @@ public abstract class CyclicThread extends Thread {
 		
 	}
 	
-	public void stop() {
+	public void stopThread() {
 		run = false;
 	}
 	

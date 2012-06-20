@@ -1,6 +1,6 @@
 package piaf.tools;
 
-import java.util.EmptyQueueException;
+import java.util.NoSuchElementException;
 
 /**
  * @author mb
@@ -61,9 +61,9 @@ public class FixedSizeQueue<E> {
 	 * fetches an object from the start of the Queue
 	 * and removes it
 	 * @return Object the object removed from the start of the stock
-	 * @throws EmptyQueueException
+	 * @throws NoSuchElementException (in order to allow execution with standard java vm)
 	 */
-    public synchronized E pop() throws EmptyQueueException {
+    public synchronized E pop() throws NoSuchElementException {
 		// get object
 		E popped = peek();
 		// remove (move First Element number) 
@@ -77,12 +77,12 @@ public class FixedSizeQueue<E> {
 	 * fetches an object from the start of the Queue
 	 * <br>does not remove it!
 	 * @return Object the object at the start of the Queue
-	 * @throws EmptyQueueException
+	 * @throws NoSuchElementException (in order to allow execution with standard java vm)
 	 */
-    public synchronized E peek() throws EmptyQueueException {
+    public synchronized E peek() throws NoSuchElementException {
 		// empty Queue?
 		if(empty())
-	    	throw new EmptyQueueException();
+	    	throw new NoSuchElementException();
 	    // return first element
 		return Queue[First_Element];
     } // peek()

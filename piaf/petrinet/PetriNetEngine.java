@@ -35,13 +35,20 @@ public class PetriNetEngine {
 		// Interface
 		this.__control = control;
 		
-		// get starting place
-		__starting_place = net.getStartingPlace();
-		__stopping_place = net.getStoppingPlace();
-		
-		if (!net.checkNet()) {
+		// create the net structure
+		if( !net.createNet() ) {
 			__control.setNetState(PetriNetInterface.STATE_ERROR);
-		} 
+		} else {
+			
+			// get starting place
+			__starting_place = net.getStartingPlace();
+			__stopping_place = net.getStoppingPlace();
+			
+			// Perform net check
+			if (!net.checkNet()) {
+				__control.setNetState(PetriNetInterface.STATE_ERROR);
+			} 
+		}
 	}
 	
 	/**

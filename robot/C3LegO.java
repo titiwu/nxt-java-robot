@@ -43,7 +43,7 @@ public class C3LegO {
 	    System.out.println("Stopping");
 	    Button.waitForAnyPress();
 	    System.out.println("Shutdown");
-	    Engine.stop();
+	    Engine.stopThread();
 		SoundThread.stop();
 		MoveAndTurn.stop();
 		
