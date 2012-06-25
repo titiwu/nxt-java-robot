@@ -85,7 +85,8 @@ public class PetriNetEngine {
 				__stopping_place_was_deactivated = true;
 			} else {
 				// Stopping place is active -> stop it!
-				this.stopNet();
+				__stopping_place.deactivate(); // leave stopping place
+				this.stopNet();    // stop remaining active places
 				__control.setNetState(PetriNetInterface.STATE_STOPPED);
 			}
 		} else if (net_state == PetriNetInterface.STATE_QUIT) {        //////////////// Force quit/emergency stop
@@ -140,7 +141,7 @@ public class PetriNetEngine {
 			}
 		}
 	}
-	
+    
 	/**
 	 * Start/reset the net
 	 * @return success
@@ -173,7 +174,9 @@ public class PetriNetEngine {
 		Place      place;
 		while (! __queue_active_places.empty()) {
 			place = (Place) __queue_active_places.pop();
-			place.emergencyExit();
+			if(place.isActive()) {
+				place.emergencyExit();
+			}
 		}		
 	}
 
